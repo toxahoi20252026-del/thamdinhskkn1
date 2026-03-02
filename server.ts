@@ -8,8 +8,13 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-async function startServer() {
-  const db = new Database("edureview.db");
+const app = express();
+const PORT = 3000;
+
+async function setupApp() {
+  // Use /tmp for SQLite on Vercel as the rest of the filesystem is read-only
+  const dbPath = process.env.VERCEL ? path.join("/tmp", "edureview.db") : "edureview.db";
+  const db = new Database(dbPath);
 
   // Initialize database
   db.exec(`
@@ -64,9 +69,6 @@ async function startServer() {
     VALUES ('judge-2', 'giamkhao2', '123', 'Trần Thị B', 'judge');
   `);
 
-  const app = express();
-  const PORT = 3000;
-
   app.use(express.json());
 
   // Health check
@@ -119,8 +121,6 @@ async function startServer() {
 
   app.delete("/api/users/:id", (req, res) => {
     try {
-      // Prevent deleting the last admin or the current admin if we had session info
-      // For now, just allow deletion but maybe add a check
       db.prepare("DELETE FROM users WHERE id = ?").run(req.params.id);
       res.json({ success: true });
     } catch (error) {
@@ -269,10 +269,14 @@ async function startServer() {
       });
     }
   }
-
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-  });
 }
 
-startServer();
+setupApp().then(() => {
+  if (process.env.NODE_ENV !== "production" || !process.env.VERCEL) {
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
+  }
+});
+
+export default app;

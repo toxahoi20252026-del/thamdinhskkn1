@@ -68,7 +68,7 @@ function cn(...inputs: ClassValue[]) {
 }
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<TabType>('dashboard');
+  const [activeTab, setActiveTab] = useState<TabType>('settings');
   const [initiatives, setInitiatives] = useState<Initiative[]>([]);
   const [currentUser, setCurrentUser] = useState<AppUser | null>({
     id: 'admin-1',
@@ -1012,17 +1012,6 @@ export default function App() {
         </nav>
 
         <div className="p-6 border-t border-yellow-200/50 space-y-4">
-          <div className={cn(
-            "flex items-center space-x-3 px-4 py-3 rounded-2xl border transition-all duration-500",
-            settings.apiKey ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-700" : "bg-rose-500/10 border-rose-500/20 text-rose-700"
-          )}>
-            <div className="relative flex h-2.5 w-2.5">
-              <span className={cn("animate-ping absolute inline-flex h-full w-full rounded-full opacity-75", settings.apiKey ? "bg-emerald-400" : "bg-rose-400")}></span>
-              <span className={cn("relative inline-flex rounded-full h-2.5 w-2.5", settings.apiKey ? "bg-emerald-500" : "bg-rose-500")}></span>
-            </div>
-            <span className="label-mono font-black !text-inherit">{settings.apiKey ? "AI Active" : "AI Offline"}</span>
-          </div>
-          
           <button 
             onClick={handleLogout}
             className="w-full flex items-center space-x-3 px-4 py-3 text-slate-500 hover:text-slate-900 hover:bg-white/30 rounded-2xl transition-all duration-300 text-sm font-bold group"
